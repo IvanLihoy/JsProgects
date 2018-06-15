@@ -1,0 +1,29 @@
+const Page = require('./page');
+
+const LoginPage = Object.create(Page, {
+    signinButton: { get: () => browserA.element("button[class='logIn")},
+    emailInput: { get: () => browserA.element("input[name='email']")},
+    passInput: { get: () => browserA.element("input[name='password']")},
+    signinForm: { get: () => browserA.element("button[class='btn-react btn btn-default']")},
+    userName: { get: () => browserA.$("//a[@id='basic-nav-dropdown']")},
+
+    inputLoginCreds: {
+        value: function(inputLogin, inputPass, email, pass) {
+            inputLogin.setValue(email);
+            inputPass.setValue(pass);
+        }
+    },
+    open: {
+        value: function() {
+            Page.open.call(this, '')
+        }
+    },
+    submitForm: {
+        value: function() {
+            this.signinForm.submitForm();
+            expect(this.userName.isExisting()).to.be.equal(true);
+        }
+    }
+})
+
+module.exports = LoginPage;
