@@ -1,5 +1,5 @@
 exports.config = {
-    
+
     //
     // ==================
     // Specify Test Files
@@ -12,6 +12,13 @@ exports.config = {
     specs: [
         './test/specs/**/*.js'
     ],
+
+    suites: {
+        login: [
+            './test/specs/login.specs.js'
+        ]
+    },
+
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -78,17 +85,18 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'https://opporty.com/',
+    //baseUrl: 'https://say_Friend_and_enter:3UrC1Nks20U2kDvtIP0GVrU1jiplerU5iU4oepM5zVm3nPeY0x@testing.opporty.com/',
+    baseUrl: 'https://testing.opporty.com/',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 6000,
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
-    connectionRetryTimeout: 90000,
+    connectionRetryTimeout: 10000,
     //
     // Default request retries count
-    connectionRetryCount: 3,
+    connectionRetryCount: 2,
     //
     // Initialize the browser instance with a WebdriverIO plugin. The object should have the
     // plugin name as key and the desired plugin options as properties. Make sure you have
@@ -127,6 +135,11 @@ exports.config = {
     // The only one supported by default is 'dot'
     // see also: http://webdriver.io/guide/reporters/dot.html
     reporters: ['spec','json'],
+    reporterOptions: {
+        json: {
+            outputDir: './reports'
+        }
+    },
     
     //
     // Options to be passed to Mocha.
@@ -166,11 +179,42 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
     before: function (capabilities, specs) {
-        browser.timeouts('implicit', 10000);
-        browser.windowHandleSize({width: 1600, height: 768});
+        browser.windowHandleMaximize();
+        browser.timeouts('implicit', 6000);
         const chai = require('chai');
         global.expect = chai.expect;
-    },
+        
+
+    //browser.addCommand("getTabsAndSwitch", function async() {
+        //return browserA.getTabIds()
+            //.then(
+            //handles => {
+               // console.log(`Found tabs ids: ${handles}`);
+               // return browserA.switchTab(handles[handles.length - 1]);
+          //  },
+          //  error => { throw err; }
+          //  )
+  //  });
+
+    // browser.addCommand('getTabsAndSwitch', function async() {
+    //     return new Promise((resolve, reject) => resolve(browserA.getTabIds()))
+    //         .then(
+    //         result => { browserA.switchTab(result[result.length - 1]) }
+    //         )
+    //         .catch(err => { throw err; })
+    // });
+
+    browser.addCommand('elementToBeClickable', function (selector, timeout) {
+        selector.waitForVisible(timeout);
+        selector.waitForEnabled(timeout);
+    });
+
+    // a listener for end session event in WDIO (refer to 'http://webdriver.io/guide/usage/eventhandling.html' for more info about event listeners)
+    // it will be executed when browser session ends
+    browser.on('end', function (session) {
+        console.log(`Session ended: ${JSON.stringify(session)}`);
+    })
+},
     /**
      * Runs before a WebdriverIO command gets executed.
      * @param {String} commandName hook command name
@@ -189,8 +233,9 @@ exports.config = {
      * Function to be executed before a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
      * @param {Object} test test details
      */
-    // beforeTest: function (test) {
-    // },
+    beforeTest: function (test) {
+        console.log(`Starting test: ${test.title}`)
+    },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
@@ -207,8 +252,10 @@ exports.config = {
      * Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) ends.
      * @param {Object} test test details
      */
-    // afterTest: function (test) {
-    // },
+    afterTest: function (test) {
+        test.passed === true && console.log(`Congrats! Test ${test.title} passed`)
+        test.passed === false && console.log(`Oops..You fucked up! Test ${test.title} failed`)
+    },
     /**
      * Hook that gets executed after the suite has ended
      * @param {Object} suite suite details
@@ -232,8 +279,9 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // after: function (result, capabilities, specs) {
-    // },
+    after: function (result) {
+        console.log(`Number of failed tests: ${result}`)
+    },
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object

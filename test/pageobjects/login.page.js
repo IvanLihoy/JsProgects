@@ -6,6 +6,7 @@ const LoginPage = Object.create(Page, {
     passInput: { get: () => browserA.element("input[name='password']")},
     signinForm: { get: () => browserA.element("button[class='btn-react btn btn-default']")},
     userName: { get: () => browserA.$("//a[@id='basic-nav-dropdown']")},
+    mp: { get: () => browserA.element("a[class='nav_menu_mp']")},
 
     inputLoginCreds: {
         value: function(inputLogin, inputPass, email, pass) {
@@ -15,7 +16,8 @@ const LoginPage = Object.create(Page, {
     },
     open: {
         value: function() {
-            Page.open.call(this, '')
+            Page.open.call();
+            //location.reload(true);
         }
     },
     submitForm: {
