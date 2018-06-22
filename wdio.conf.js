@@ -51,7 +51,8 @@ exports.config = {
             args: [
                 //"headless",
                 "use-fake-device-for-media-stream",
-                "use-fake-ui-for-media-stream"
+                "use-fake-ui-for-media-stream",
+                "disable-blink-features=BlockCredentialedSubresources"
             ]
         }
 },
@@ -135,11 +136,11 @@ exports.config = {
     // The only one supported by default is 'dot'
     // see also: http://webdriver.io/guide/reporters/dot.html
     reporters: ['spec','json'],
-    reporterOptions: {
-        json: {
-            outputDir: './reports'
-        }
-    },
+    //reporterOptions: {
+    //    json: {
+    //        outputDir: './reports'
+    //    }
+    //},
     
     //
     // Options to be passed to Mocha.
@@ -184,7 +185,6 @@ exports.config = {
         const chai = require('chai');
         global.expect = chai.expect;
         
-
     //browser.addCommand("getTabsAndSwitch", function async() {
         //return browserA.getTabIds()
             //.then(

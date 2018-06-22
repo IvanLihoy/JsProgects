@@ -16,7 +16,7 @@ const LoginPage = Object.create(Page, {
     },
     open: {
         value: function() {
-            Page.open.call();
+            Page.open.call(this, '');
             //location.reload(true);
         }
     },
